@@ -3,6 +3,9 @@ const router = express.Router();
 const upload = require("../lib/upload");
 const { protect, authorize } = require("../lib/auth");
 
+const path = require("path");
+const fs = require("fs");
+
 const {
   createLead,
   updateLeadStatus,
@@ -77,6 +80,28 @@ router.patch(
 );
 
 router.delete("/:id", protect, authorize("CLIENT"), deleteLead);
+
+
+router.get(
+  "/download/:filename",
+  protect,
+  authorize("ADMIN", "CLIENT"),
+  (req, res) => {
+    const { filename } = req.params;
+    const filePath = path.join(__dirname, "../uploads", filename);
+
+    if (fs.existsSync(filePath)) {
+      res.download(filePath, filename, (err) => {
+        if (err) {
+          console.error("Download error:", err);
+          res.status(500).json({ message: "Error downloading file" });
+        }
+      });
+    } else {
+      res.status(404).json({ message: "File not found on server" });
+    }
+  }
+);
 
 
 

@@ -14,7 +14,8 @@ const leadSchema = new mongoose.Schema(
     status: { 
       type: String, 
       default: "NEW LEAD", 
-      enum: ["NEW LEAD", "Approved", "Disbursed", "Rejected"] 
+      enum: ["Pending" , "NEW LEAD", "Approved", "Disbursed", "Rejected"] ,
+      default: "Pending"
     },
     loanDetails: { type: Map, of: String, default: {} },
     documents: [{ fileName: String, docType: String, url: String }],

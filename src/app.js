@@ -1,31 +1,40 @@
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
 const authRoutes = require('./routes/authRouth');
 const leadRoutes = require('./routes/leadRouths');
 const protectedRoutes = require('./routes/protected');
-const targetRoutes = require('./routes/targetRoutes')
-const userRoutes = require('./routes/userRoutes')
+const targetRoutes = require('./routes/targetRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
-// app.use(cors());
+// 1. Updated CORS for Production
+// This allows your Vercel frontend to make requests to Render
 app.use(cors({
-  origin: "https://sri-sri-associates.vercel.app",
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  origin: ["https://sri-sri-associates.vercel.app", "http://localhost:5173"], 
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   credentials: true
 }));
+
 app.use(express.json());
 
-app.use('/api/auth' , authRoutes);
-app.use('/uploads' , express.static(path.join(__dirname , '..' , 'uploads')));
-app.use("/api/protected" , protectedRoutes);
-app.use("/api/leads" , leadRoutes);
-app.use("/api/targets" , targetRoutes);
-app.use("/api/users", userRoutes); 
+// 2. API Routes
+app.use('/api/auth', authRoutes);
+app.use("/api/protected", protectedRoutes);
+app.use("/api/leads", leadRoutes);
+app.use("/api/targets", targetRoutes);
+app.use("/api/users", userRoutes);
 
-app.get('/' , (req , res) =>{
-    res.send("HELLO WORLD");
+// Note: app.use('/uploads') is removed because we now use Cloudinary URLs!
+
+app.get('/', (req, res) => {
+    res.send("SRI SRI ASSOCIATES API IS RUNNING");
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ success: false, message: "Something went wrong on the server" });
 });
 
 module.exports = app;

@@ -5,6 +5,10 @@ const leadRoutes = require('./routes/leadRouths');
 const protectedRoutes = require('./routes/protected');
 const targetRoutes = require('./routes/targetRoutes');
 const userRoutes = require('./routes/userRoutes');
+const attendanceRoutes = require('./routes/attendanceRoutes');
+const leaveRoutes = require('./routes/leaveRoutes');
+const downloadRoutes = require('./routes/downloadRoutes');
+
 
 const app = express();
 
@@ -24,6 +28,9 @@ app.use("/api/protected", protectedRoutes);
 app.use("/api/leads", leadRoutes);
 app.use("/api/targets", targetRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/attendance", attendanceRoutes);
+app.use("/api/leaves", leaveRoutes);
+app.use("/api/download", downloadRoutes);
 
 // Note: app.use('/uploads') is removed because we now use Cloudinary URLs!
 

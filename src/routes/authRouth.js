@@ -51,6 +51,9 @@ router.post("/login" , async (req, res) =>{
             return res.status(403).json({message: "User account is deactivated"});
         }
 
+        if(user.role === "CLIENT" && !user.isApproved){
+            return res.status(403).json({message: "Your account is pending approval. Please wait for an admin to approve your account."});
+        }
 
         res.json({
             message: "Login successful",

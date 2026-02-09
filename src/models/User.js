@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema({
     default: 'CLIENT',
     uppercase: true,
   },
+  isApproved:{
+    type: Boolean,
+    default: false,
+  },
   isActive:{
     type: Boolean,
     default: true,

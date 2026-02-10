@@ -12,8 +12,6 @@ const downloadRoutes = require('./routes/downloadRoutes');
 
 const app = express();
 
-// 1. Updated CORS for Production
-// This allows your Vercel frontend to make requests to Render
 app.use(cors({
   origin: ["https://sri-sri-associates.vercel.app", "http://localhost:5173"], 
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
@@ -22,7 +20,6 @@ app.use(cors({
 
 app.use(express.json());
 
-// 2. API Routes
 app.use('/api/auth', authRoutes);
 app.use("/api/protected", protectedRoutes);
 app.use("/api/leads", leadRoutes);
@@ -32,13 +29,10 @@ app.use("/api/attendance", attendanceRoutes);
 app.use("/api/leaves", leaveRoutes);
 app.use("/api/download", downloadRoutes);
 
-// Note: app.use('/uploads') is removed because we now use Cloudinary URLs!
 
 app.get('/', (req, res) => {
     res.send("SRI SRI ASSOCIATES API IS RUNNING");
 });
-
-// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ success: false, message: "Something went wrong on the server" });

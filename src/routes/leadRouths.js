@@ -40,7 +40,7 @@ router.put(
   "/:id",
   protect,
   authorize("CLIENT"),
-  upload.array("documents", 5), // Allows up to 5 files during edit
+  upload.array("documents", 5),
   updateLead,
 );
 /**
@@ -60,23 +60,28 @@ router.patch("/:id/status", protect, authorize("ADMIN"), updateLeadStatus);
 
 router.delete("/:id", protect, authorize("CLIENT"), deleteLead);
 
+router.get(
+  "/leads/:leadId/download",
+  protect,
+  authorize("ADMIN", "CLIENT"),
+  async (req, res) => {
+    const { leadId } = req.params;
+    const { docId } = req.query;
 
-router.get("/leads/:leadId/download", protect, authorize("ADMIN", "CLIENT"), async (req, res) => {
-  const { leadId } = req.params;
-  const { docId } = req.query;
+    const lead = await Leads.findById(leadId);
+    if (!lead) return res.status(404).json({ message: "Leads not found" });
 
-  const lead = await Leads.findById(leadId);
-  if (!lead) return res.status(404).json({ message: "Leads not found" });
+    if (req.user.role !== "ADMIN" && lead.client.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
 
-  if (req.user.role !== "ADMIN" && lead.client.toString() !== req.user.id) {
-    return res.status(403).json({ message: "Unauthorized" });
-  }
+    const document = lead.documents.find((d) => d._id.toString() === docId);
+    if (!document)
+      return res.status(404).json({ message: "Document not found" });
 
-  const document = lead.documents.find(d => d._id.toString() === docId);
-  if (!document) return res.status(404).json({ message: "Document not found" });
-
-  res.redirect(document.url); // <-- simplest way to download via server
-});
+    res.redirect(document.url);
+  },
+);
 
 router.get("/download/:id", async (req, res) => {
   const lead = await Leads.findOne({ "documents._id": req.params.id });
@@ -89,24 +94,34 @@ router.get("/download/:id", async (req, res) => {
   res.redirect(doc.url);
 });
 
-
-
 router.get("/client/:id", protect, authorize("ADMIN"), async (req, res) => {
-  try{
+  try {
     const userId = req.params.id;
-    const leads = await Leads.find({client: userId}).sort({ createdAt: -1 });
+    const leads = await Leads.find({ client: userId }).sort({ createdAt: -1 });
 
-    res.json({success: true, data: leads}); 
-  }catch(err){
+    res.json({ success: true, data: leads });
+  } catch (err) {
     console.error("CLIENT LEADS ERROR:", err.message);
-    res.status(500).json({message: "Server Error", error: err.message});
-
+    res.status(500).json({ message: "Server Error", error: err.message });
   }
 });
 
-// 3. PLACE PARAMETER ROUTES LAST
+router.put(
+  "/admin-update/:id",
+  protect,
+  authorize("ADMIN"),
+  updateLead
+);
+
+
 router.get("/:id", protect, authorize("ADMIN", "CLIENT"), getLeadById);
-router.put("/:id", protect, authorize("CLIENT"), upload.array("documents", 5), updateLead);
+router.put(
+  "/:id",
+  protect,
+  authorize("CLIENT"),
+  upload.array("documents", 5),
+  updateLead,
+);
 router.patch("/:id/status", protect, authorize("ADMIN"), updateLeadStatus);
 router.delete("/:id", protect, authorize("CLIENT"), deleteLead);
 

@@ -7,7 +7,7 @@ const attendanceSchema = new mongoose.Schema({
     required: true,
   },
   date: {
-    type: String, // Stored as YYYY-MM-DD for easy daily lookup
+    type: String, 
     required: true,
   },
   punchIn: {

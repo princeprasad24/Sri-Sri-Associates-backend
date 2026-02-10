@@ -39,7 +39,7 @@ const leadSchema = new mongoose.Schema(
         uploadedAt: { type: Date, default: Date.now },
       },
     ],
-    isFinished: { type: Boolean, default: false }, // Logic field
+    isFinished: { type: Boolean, default: false }, 
     remarks: { type: String },
   },
   { timestamps: true },

@@ -23,11 +23,10 @@ const checkCompletion = (loanType, core, details = {}) => {
 
     case "Vehicle Insurance":
       return !!(
-        details.vehicleType && 
-        details.vehicleModel && 
-        details.year && 
-        details.idv && 
-        details.vehicleNumber
+        details.insuranceProvider && 
+        details.vehicleNumber && 
+        details.policyNumber && 
+        details.endDate 
       );
 
       case "Other Loan Types":

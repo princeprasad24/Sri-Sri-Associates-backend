@@ -13,7 +13,7 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'leads_documents',
-    resource_type: 'auto', // Important: allows PDFs and Images
+    resource_type: 'auto', 
     allowed_formats: ['jpg', 'png', 'pdf'],
   },
 });

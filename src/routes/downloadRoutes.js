@@ -14,13 +14,12 @@ router.get("/:publicId", (req, res) => {
     const resourceType = isRaw ? "raw" : "image";
 
     const downloadUrl = cloudinary.url(publicId, {
-      resource_type: resourceType, 
-      flags: "attachment",         
+      resource_type: resourceType,
+      flags: "attachment",
       secure: true,
-      sign_url: false              
+      sign_url: false,
     });
 
-    console.log("Generated Valid URL:", downloadUrl);
     return res.json({ url: downloadUrl });
   } catch (err) {
     console.error("Download error:", err);

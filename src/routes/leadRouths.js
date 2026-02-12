@@ -36,6 +36,8 @@ router.post(
  */
 router.get("/my-leads", protect, authorize("CLIENT"), getClientLeads);
 
+
+
 router.put(
   "/:id",
   protect,
@@ -47,6 +49,8 @@ router.put(
  * ADMIN – ALL LEADS
  */
 router.get("/all", protect, authorize("ADMIN"), getAllLeads);
+
+router.delete("/:id", protect, authorize("ADMIN"), deleteLead);
 
 /**
  * GET SINGLE LEAD (ADMIN + CLIENT)

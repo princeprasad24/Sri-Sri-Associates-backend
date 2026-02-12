@@ -1,7 +1,11 @@
 const express = require("express");
 const { protect, authorize } = require("../lib/auth");
 const User = require("../models/User");
-
+const { 
+  getAllClients, 
+  toggleUserStatus, 
+  deleteClient 
+} = require("../controllers/userController");
 const router = express.Router();
 
 // GET all clients - ADMIN only
@@ -78,5 +82,7 @@ router.get("/attendance-logs", protect, authorize("ADMIN"), async (req, res) => 
   const logs = await Attendance.find().populate("user", "name email").sort("-createdAt");
   res.json({ data: logs });
 });
+
+router.delete("/:id", protect, authorize("ADMIN"), deleteClient);
 
 module.exports = router;

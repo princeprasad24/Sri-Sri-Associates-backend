@@ -18,25 +18,32 @@ router.get("/progress/:id", protect, authorize("ADMIN"), async (req, res) => {
     const month = now.getMonth() + 1;
     const year = now.getFullYear();
 
-    const target = await Target.findOne({ user: userId, month, year });
+    const target = await Target.findOne({ client: userId, month, year });
+
+    const start = new Date(year, month - 1, 1);
+    const end = new Date(year, month, 0, 23, 59, 59);
 
     const leads = await Leads.find({
       client: userId,
       status: "Disbursed",
+      createdAt: { $gte: start, $lte: end },
     });
 
     const completedAmount = leads.reduce(
       (acc, lead) => acc + (Number(lead.loanAmount) || 0),
       0,
     );
-    
-    const monthName = new Date(year, month - 1).toLocaleString("default", { month: "long" });
+
+    const monthName = now.toLocaleString("default", { month: "long" });
 
     res.json({
-      targetAmount: target?.amount || 0,
+      targetAmount: target?.targetAmount || 0,
       completedAmount,
       month: monthName,
       year,
+      remainingAmount: target
+        ? Math.max(0, target.targetAmount - completedAmount)
+        : 0,
     });
   } catch (err) {
     console.error("TARGET PROGRESS ERROR:", err.message);
